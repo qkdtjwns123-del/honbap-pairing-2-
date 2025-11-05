@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>혼밥러 · 로그인</title>
+    <link rel="stylesheet" href="style.css?v=17" />
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🍚</div>
+            <h1 class="title">혼밥러 · 로그인</h1>
+        </div>
+
+        <div class="card">
+            <label>이메일</label>
+            <input id="loginEmail" type="email" placeholder="example@kw.ac.kr" autocomplete="email" />
+
+            <label>비밀번호</label>
+            <input id="loginPassword" type="password" placeholder="********" />
+
+            <button id="loginBtn" class="btn">로그인</button>
+            <!-- ✅ 성공 메시지 표출 영역 (프로필 저장과 같은 스타일) -->
+            <p id="loginStatus" class="status" style="margin-top:8px;"></p>
+
+            <p id="msg" class="status"></p>
+
+            <div class="hr"></div>
+            <div class="nav">
+                <a class="link-btn" href="signup.html">회원가입</a>
+                <a class="link-btn" href="community.html">커뮤니티</a>
+                <a class="link-btn" href="index.html">홈</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ 순서 유지: config.js → firebase.js → 페이지 스크립트 -->
+    <script src="config.js?v=26"></script>
+    <script type="module" src="./firebase.js?v=26"></script>
+
+    <script type="module">
+        const $ = (s) => document.querySelector(s);
+        const emailEl = $("#loginEmail");
+        const pwEl = $("#loginPassword");
+        const msg = $("#msg");
+        const loginBtn = $("#loginBtn");
+        const loginStatus = $("#loginStatus");
+
+        // fb 준비 대기 (레이스 방지)
+        async function waitFb() {
+            if (window.fbReady) {
+                await window.fbReady;
+            } else {
+                while (!(window.fb && window.fb.loginWithEmailPassword)) {
+                    await new Promise(r => setTimeout(r, 30));
+                }
+            }
+        }
+        await waitFb();
+
+        loginBtn?.addEventListener("click", async () => {
+            // 이전 메시지 초기화
+            msg.className = "status"; msg.textContent = "";
+            loginStatus.className = "status"; loginStatus.textContent = "";
+
+            try {
+                const email = (emailEl.value || "").trim();
+                const pw = pwEl.value;
+                if (!email || !pw) {
+                    msg.className = "status err";
+                    msg.textContent = "이메일/비밀번호를 입력하세요.";
+                    return;
+                }
+
+                loginBtn.disabled = true;
+                await window.fb.loginWithEmailPassword(email, pw);
+                sessionStorage.setItem('lastEmail', email);
+
+                // ✅ 알림창 대신 초록 글씨로 표출 (프로필 저장과 동일 스타일)
+                loginStatus.className = "status ok";
+                loginStatus.textContent = "로그인 성공!";
+
+                // 잠깐 보여준 뒤 이동
+                setTimeout(() => { location.href = "profile.html"; }, 500);
+            } catch (e) {
+                msg.className = "status err";
+                msg.textContent = "로그인 실패: " + (e.message || e);
+            } finally {
+                loginBtn.disabled = false;
+            }
+        });
+
+        [emailEl, pwEl].forEach(el => el.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") loginBtn.click();
+        }));
+    </script>
+</body>
+</html>
