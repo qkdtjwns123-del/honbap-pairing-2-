@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>혼밥러 · 커뮤니티</title>
+    <link rel="stylesheet" href="style.css?v=17" />
+    <style>
+        .post-card {
+            background: #0e1322;
+            border: 1px solid #22283a;
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 12px
+        }
+
+        .post-title {
+            font-weight: 800;
+            font-size: 16px;
+            margin: 0 0 4px 0
+        }
+
+        .post-meta {
+            font-size: 12px;
+            color: #9aa0a6;
+            margin: 4px 0 8px 0
+        }
+
+        .post-body {
+            white-space: pre-wrap;
+            line-height: 1.5
+        }
+
+        .row-wrap {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .muted-sm {
+            color: #9aa0a6;
+            font-size: 12px
+        }
+
+        .chip {
+            display: inline-block;
+            padding: 4px 8px;
+            border: 1px solid #2a3145;
+            border-radius: 999px;
+            font-size: 12px
+        }
+
+        .anon-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="topbar">
+            <div class="header" style="margin:0"><div class="logo">🧑‍🍳</div><h1 class="title">혼밥러 · 커뮤니티</h1></div>
+            <div class="row-wrap"><a class="link-btn" href="match.html">매칭</a><a class="link-btn" href="profile.html">프로필</a><a class="link-btn" href="index.html">홈</a></div>
+        </div>
+
+        <div class="card">
+            <h2 class="title" style="font-size:18px;margin-top:0">게시글 쓰기</h2>
+            <label>제목</label>
+            <input id="title" type="text" placeholder="예: 오늘 점심 혼밥 후기" maxlength="120" />
+            <label>내용</label>
+            <textarea id="body" rows="6" placeholder="예: 추천 식당/메뉴/시간대 등 자유롭게"></textarea>
+
+            <label class="anon-wrap"><input id="anon" type="checkbox" /><span class="muted-sm">익명으로 올리기</span></label>
+
+            <div class="row" style="margin-top:8px">
+                <button id="postBtn" class="btn" style="width:auto;min-width:120px">등록</button>
+                <span id="postMsg" class="status"></span>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+            <div class="topbar" style="margin-bottom:0"><h2 class="title" style="font-size:18px;margin:0">최신 글</h2><span class="muted-sm" id="countTxt"></span></div>
+            <div id="list"></div>
+            <button id="moreBtn" class="btn secondary" style="margin-top:12px;display:none">더 보기</button>
+        </div>
+    </div>
+
+    <script src="config.js?v=26"></script>
+    <script type="module" src="./firebase.js?v=26"></script>
+    <script type="module">
+        const $ = (s) => document.querySelector(s);
+        const list = $("#list"), moreBtn = $("#moreBtn"), countTxt = $("#countTxt"), postBtn = $("#postBtn"),
+            postMsg = $("#postMsg"), titleEl = $("#title"), bodyEl = $("#body"), anonEl = $("#anon");
+
+        const esc = (s) => (s || "").replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[m]));
+
+        if (window.fbReady) await window.fbReady;
+        await window.fb.requireAuth();
+        const cu = window.fb.auth.currentUser;
+        if (!cu || cu.isAnonymous) { alert("로그인이 필요합니다."); location.href = "login.html"; throw new Error("anonymous session"); }
+
+        const MY_UID = cu.uid;
+        const MY_EMAIL = (cu.email || "").toLowerCase();
+        const IS_ADMIN = window.fb.isAdminEmail?.(MY_EMAIL) === true;
+
+        function canEditOrDelete(post) {
+            const byUid = post.authorUid && post.authorUid === MY_UID;
+            const byEmail = (post.authorEmail || "").toLowerCase() === MY_EMAIL;
+            return IS_ADMIN || byUid || byEmail;
+        }
+
+        function renderPostCard(p) {
+            const wrap = document.createElement("div");
+            wrap.className = "post-card";
+            const display = p.authorDisplay || (p.authorEmail ? p.authorEmail.split("@")[0] : "익명");
+
+            wrap.innerHTML = `
+                <h3 class="post-title">${esc(p.title)}</h3>
+                <div class="post-meta">${esc(display)} · ${p.createdAt?.toDate ? p.createdAt.toDate().toLocaleString() : ""}</div>
+                <div class="post-body">${esc(p.body)}</div>
+                <div class="row" style="gap:8px; margin-top:8px"></div>
+              `;
+            const row = wrap.querySelector(".row");
+            if (canEditOrDelete(p)) {
+                const editBtn = document.createElement("button");
+                editBtn.className = "link-btn"; editBtn.textContent = "수정";
+                editBtn.style.borderColor = "var(--accent)"; editBtn.style.color = "var(--accent)";
+                editBtn.addEventListener("click", async () => {
+                    const nt = prompt("새 제목을 입력하세요", p.title ?? ""); if (nt == null) return;
+                    const nb = prompt("새 내용을 입력하세요", p.body ?? ""); if (nb == null) return;
+                    try {
+                        await window.fb.updatePost(p.id, { title: nt, body: nb });
+                        p.title = nt; p.body = nb;
+                        wrap.querySelector(".post-title").textContent = nt;
+                        wrap.querySelector(".post-body").textContent = nb;
+                    } catch (e) { alert("수정 실패: " + (e.message || e)); }
+                });
+                row.appendChild(editBtn);
+
+                const delBtn = document.createElement("button");
+                delBtn.textContent = "삭제"; delBtn.className = "link-btn";
+                delBtn.style.borderColor = "#ef4444"; delBtn.style.color = "#ef4444";
+                delBtn.addEventListener("click", async () => {
+                    if (!confirm("정말 삭제할까요?")) return;
+                    try { await window.fb.deletePost(p.id); wrap.remove(); const left = list.querySelectorAll(".post-card").length; countTxt.textContent = left ? `총 ${left}개` : ""; }
+                    catch (e) { alert("삭제 실패: " + (e.message || e)); }
+                });
+                row.appendChild(delBtn);
+            }
+            list.prepend(wrap);
+        }
+
+        postBtn?.addEventListener("click", async () => {
+            try {
+                postMsg.className = "status"; postMsg.textContent = "";
+                const title = (titleEl.value || "").trim(); const body = (bodyEl.value || "").trim();
+                const anonymous = !!anonEl.checked;
+                if (!title) { postMsg.className = "status err"; postMsg.textContent = "제목을 입력하세요."; return; }
+                postBtn.disabled = true;
+                await window.fb.createPost({ title, body, anonymous });
+                titleEl.value = ""; bodyEl.value = ""; anonEl.checked = false;
+                postMsg.className = "status ok"; postMsg.textContent = "등록 완료!";
+                list.innerHTML = ""; await loadMore();
+            } catch (e) {
+                postMsg.className = "status err"; postMsg.textContent = "등록 실패: " + (e.message || e);
+            } finally { postBtn.disabled = false; }
+        });
+
+        async function loadMore() {
+            try {
+                const items = await window.fb.listPosts({ take: 20 }) || [];
+                (Array.isArray(items) ? items : (items.items || [])).forEach(renderPostCard);
+                moreBtn.style.display = "none";
+                const n = list.querySelectorAll(".post-card").length;
+                countTxt.textContent = n ? `총 ${n}개` : "";
+            } catch (e) {
+                console.error(e);
+                postMsg.className = "status err";
+                postMsg.textContent = "목록을 불러오지 못했어요.";
+            }
+        }
+        await loadMore();
+    </script>
+</body>
+</html>
