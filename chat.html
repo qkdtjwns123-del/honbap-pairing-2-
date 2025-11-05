@@ -6,45 +6,12 @@
     <title>혼밥러 · 채팅</title>
     <link rel="stylesheet" href="style.css" />
     <style>
-        .chat-wrap {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-height: 70vh;
-            overflow: auto;
-            padding: 8px;
-            background: #0e1322;
-            border-radius: 12px;
-            border: 1px solid #22283a
-        }
-
-        .msg {
-            padding: 10px 12px;
-            border-radius: 12px;
-            max-width: 75%
-        }
-
-        .me {
-            align-self: flex-end;
-            background: #1b2438
-        }
-
-        .other {
-            align-self: flex-start;
-            background: #121a2b
-        }
-
-        .meta {
-            font-size: 11px;
-            color: #9aa0a6;
-            margin-top: 4px
-        }
-
-        .send-row {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px
-        }
+        .chat-wrap { display: flex; flex-direction: column; gap: 12px; max-height: 70vh; overflow: auto; padding: 8px; background: #0e1322; border-radius: 12px; border: 1px solid #22283a }
+        .msg { padding: 10px 12px; border-radius: 12px; max-width: 75% }
+        .me { align-self: flex-end; background: #1b2438 }
+        .other { align-self: flex-start; background: #121a2b }
+        .meta { font-size: 11px; color: #9aa0a6; margin-top: 4px }
+        .send-row { display: flex; gap: 8px; margin-top: 10px }
     </style>
 </head>
 <body>
@@ -64,7 +31,8 @@
         </div>
     </div>
 
-    <script type="module" src="./firebase.js?v=26"></script>
+    <script src="config.js?v=26"></script>
+    <script type="module" src="./firebase.js?v=28"></script>
     <script type="module">
         const $ = (s) => document.querySelector(s);
         const chat = $("#chat"), text = $("#text"), msg = $("#msg");
@@ -111,8 +79,5 @@
 
         window.addEventListener("beforeunload", () => { try { unsub && unsub(); } catch { } });
     </script>
-
-    <script src="config.js?v=26"></script>
-    <script type="module" src="firebase.js?v=26"></script>
 </body>
 </html>
