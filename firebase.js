@@ -125,7 +125,6 @@ async function applyPenalty({ kind }) {
 
         // 5회 이상이면 1시간 이용 제한
         if (penaltyScore >= PENALTY_LIMIT) {
-            // 클라이언트 시각 기준 1시간 (서버타임 스탬프만으로 +1h 불가하므로 Date 사용)
             const until = new Date(Date.now() + BAN_DURATION_MS);
             patch.bannedUntil = until;
         }
@@ -181,7 +180,6 @@ async function createPost({ title, body, anonymous = false }) {
     await my.requireAuth();
     const u = auth.currentUser;
 
-    // 표시 이름
     let authorDisplay = "익명";
     if (!anonymous) {
         const prof = await my.nowProfile().catch(() => null);
@@ -194,7 +192,7 @@ async function createPost({ title, body, anonymous = false }) {
         title: title ?? "",
         body: body ?? "",
         authorUid: u.uid,
-        authorEmail: u.email ?? null,  // 권한 판정용
+        authorEmail: u.email ?? null,
         authorDisplay,
         isAnonymous: !!anonymous,
         createdAt: serverTimestamp(),
