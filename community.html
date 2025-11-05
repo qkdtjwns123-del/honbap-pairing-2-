@@ -13,49 +13,13 @@
             padding: 14px;
             margin-top: 12px
         }
-
-        .post-title {
-            font-weight: 800;
-            font-size: 16px;
-            margin: 0 0 4px 0
-        }
-
-        .post-meta {
-            font-size: 12px;
-            color: #9aa0a6;
-            margin: 4px 0 8px 0
-        }
-
-        .post-body {
-            white-space: pre-wrap;
-            line-height: 1.5
-        }
-
-        .row-wrap {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap
-        }
-
-        .muted-sm {
-            color: #9aa0a6;
-            font-size: 12px
-        }
-
-        .chip {
-            display: inline-block;
-            padding: 4px 8px;
-            border: 1px solid #2a3145;
-            border-radius: 999px;
-            font-size: 12px
-        }
-
-        .anon-wrap {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 8px
-        }
+        .post-title { font-weight: 800; font-size: 16px; margin: 0 0 4px 0 }
+        .post-meta { font-size: 12px; color: #9aa0a6; margin: 4px 0 8px 0 }
+        .post-body { white-space: pre-wrap; line-height: 1.5 }
+        .row-wrap { display: flex; gap: 8px; flex-wrap: wrap }
+        .muted-sm { color: #9aa0a6; font-size: 12px }
+        .chip { display: inline-block; padding: 4px 8px; border: 1px solid #2a3145; border-radius: 999px; font-size: 12px }
+        .anon-wrap { display: flex; align-items: center; gap: 6px; margin-top: 8px }
     </style>
 </head>
 <body>
@@ -88,7 +52,7 @@
     </div>
 
     <script src="config.js?v=26"></script>
-    <script type="module" src="./firebase.js?v=26"></script>
+    <script type="module" src="./firebase.js?v=28"></script>
     <script type="module">
         const $ = (s) => document.querySelector(s);
         const list = $("#list"), moreBtn = $("#moreBtn"), countTxt = $("#countTxt"), postBtn = $("#postBtn"),
