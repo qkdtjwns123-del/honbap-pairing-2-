@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>혼밥러 · 매칭</title>
     <link rel="stylesheet" href="style.css" />
-    <script type="module" src="./firebase.js?v=28"></script>
 </head>
 <body>
     <div class="container">
@@ -42,6 +41,8 @@
         </div>
     </div>
 
+    <script src="config.js?v=26"></script>
+    <script type="module" src="firebase.js?v=28"></script>
     <script type="module">
         const $ = (id) => document.getElementById(id);
         const say = (msg, ok = true) => { const el = $('status'); el.textContent = msg || ''; el.style.color = ok ? 'var(--text-muted,#9fb7d0)' : '#ff6b6b'; };
@@ -86,15 +87,15 @@
                 const { id: roomId } = await fb.startMatching(opts);
                 if (checkCancelled()) return cleanup(true, fb);
 
-                // ✅ 자동 수락 시도 (내 수락)
+                // ✅ 자동 수락
                 try { await fb.acceptMatch(roomId); } catch (_) { }
 
                 say('매칭 중… (상대 수락 대기)');
                 const accepted = await fb.readyToAccept(roomId, 30);
                 if (checkCancelled()) return cleanup(true, fb);
                 if (!accepted) {
-                    // 상대 미응답/거절: 내 패널티 없음
-                    say('상대가 수락하지 않았어요.', false);
+                    say('상대가 수락하지 않았어요. (패널티 -1점)', false);
+                    await fb.applyPenalty({ kind: 'early_decline' });
                     return;
                 }
 
@@ -103,16 +104,13 @@
                 if (checkCancelled()) return cleanup(true, fb);
 
                 if (yes) { await fb.startYes(roomId); }
-                else { await fb.startNo(roomId); say('채팅 시작을 거절했습니다.', false); return; }
+                else { await fb.startNo(roomId); say('채팅 시작을 거절했어요. (패널티 -1점)', false); await fb.applyPenalty({ kind: 'start_decline' }); return; }
 
                 say('매칭 중… (상대 시작 여부 확인)');
                 const go = await fb.readyToChat(roomId, 30);
                 if (checkCancelled()) return cleanup(true, fb);
                 if (go) { localStorage.setItem('lastRoomId', roomId); say('채팅방으로 이동합니다…'); await fb.gotoRoom(roomId); }
-                else { 
-                    // 상대가 "아니오" → 내 패널티 없음
-                    say('상대가 채팅 시작을 거절했어요.', false); 
-                }
+                else { say('상대가 채팅 시작을 거절했어요. (패널티 -1점)', false); await fb.applyPenalty({ kind: 'start_decline' }); }
             } catch (e) {
                 console.error(e); say('시작 실패: ' + (e?.message || e), false);
             } finally { cleanup(); }
@@ -128,8 +126,5 @@
             if (alsoCancel) { (async () => { try { const fb = fbInstance || await ensureFbReady(); await fb.cancelMatching(); } catch { } })(); }
         }
     </script>
-
-    <script src="config.js?v=26"></script>
-    <script type="module" src="firebase.js?v=28"></script>
 </body>
 </html>
