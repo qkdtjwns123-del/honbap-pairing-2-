@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>혼밥러 · 테스트 봇</title>
     <link rel="stylesheet" href="style.css" />
-    <script type="module" src="./firebase.js?v=26"></script>
 </head>
 <body>
     <div class="container">
@@ -28,6 +27,8 @@
         </div>
     </div>
 
+    <script src="config.js?v=26"></script>
+    <script type="module" src="./firebase.js?v=28"></script>
     <script type="module">
         const $ = (id) => document.getElementById(id);
         const say = (msg, ok = true) => { const el = $('status'); el.textContent = msg || ''; el.style.color = ok ? 'var(--text-muted,#9fb7d0)' : '#ff6b6b'; };
