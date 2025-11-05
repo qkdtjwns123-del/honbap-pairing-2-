@@ -1,0 +1,57 @@
+<!-- === filename: bot.html (테스트봇 전용) === -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>혼밥러 · 테스트 봇</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="./firebase.js?v=26"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1 class="title">🤖 혼밥러 · 테스트 봇</h1>
+            <p class="muted" style="margin-top:4px">이 페이지는 <b>조건 무시</b>하고 테스트봇과 <b>즉시 매칭</b>해 채팅방을 생성합니다.</p>
+        </header>
+
+        <div class="card" style="max-width:560px">
+            <div class="row" style="gap:12px; margin-bottom:8px">
+                <button id="startBotBtn" class="btn outline">테스트봇과 매칭</button>
+            </div>
+            <p id="status" class="muted" style="min-height:20px"></p>
+            <div class="row" style="gap:8px; margin-top:8px">
+                <a class="btn outline" href="match.html">사용자 매칭</a>
+                <a class="btn outline" href="community.html">커뮤니티</a>
+                <a class="btn outline" href="index.html">홈</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        const $ = (id) => document.getElementById(id);
+        const say = (msg, ok = true) => { const el = $('status'); el.textContent = msg || ''; el.style.color = ok ? 'var(--text-muted,#9fb7d0)' : '#ff6b6b'; };
+        async function ensureFbReady(timeoutMs = 8000) {
+            if (window.fb) return window.fb;
+            const readyP = (window.fbReady && typeof window.fbReady.then === 'function') ? window.fbReady :
+                new Promise((resolve, reject) => {
+                    const t0 = Date.now(); const iv = setInterval(() => {
+                        if (window.fb) { clearInterval(iv); resolve(window.fb); }
+                        if (Date.now() - t0 > timeoutMs) { clearInterval(iv); reject(new Error('firebase 로더가 준비되지 않았어요.')); }
+                    }, 100);
+                });
+            const timeoutP = new Promise((_, rej) => setTimeout(() => rej(new Error('firebase 로더가 준비되지 않았어요.')), timeoutMs));
+            return await Promise.race([readyP, timeoutP]);
+        }
+        $('startBotBtn').addEventListener('click', async () => {
+            const btn = $('startBotBtn'); btn.disabled = true; say('');
+            try {
+                const fb = await ensureFbReady(); await fb.requireAuth();
+                const { id: roomId } = await fb.startWithTestBot();
+                say('채팅방 생성 완료. 이동합니다…'); await fb.gotoRoom(roomId);
+            } catch (e) { console.error(e); say('시작 실패: ' + (e?.message || e), false); }
+            finally { btn.disabled = false; }
+        });
+    </script>
+</body>
+</html>
