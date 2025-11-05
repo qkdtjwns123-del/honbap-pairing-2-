@@ -91,11 +91,10 @@ input, select, textarea {
     outline: none;
     transition: all .15s ease
 }
-
-    input:focus, select:focus, textarea:focus {
-        border-color: #3a4c7a;
-        box-shadow: 0 0 0 3px rgba(96,165,250,.15)
-    }
+input:focus, select:focus, textarea:focus {
+    border-color: #3a4c7a;
+    box-shadow: 0 0 0 3px rgba(96,165,250,.15)
+}
 
 .btn {
     margin-top: 16px;
@@ -108,11 +107,10 @@ input, select, textarea {
     color: #00111f;
     cursor: pointer
 }
-
-    .btn:disabled {
-        opacity: .6;
-        cursor: not-allowed
-    }
+.btn:disabled {
+    opacity: .6;
+    cursor: not-allowed
+}
 
 .nav {
     display: flex;
@@ -129,14 +127,8 @@ input, select, textarea {
     margin-top: 10px;
     min-height: 22px
 }
-
-    .status.ok {
-        color: var(--ok)
-    }
-
-    .status.err {
-        color: var(--danger)
-    }
+.status.ok { color: var(--ok) }
+.status.err { color: var(--danger) }
 
 .hr {
     height: 1px;
@@ -168,11 +160,10 @@ input, select, textarea {
     border: 1px solid var(--accent);
     margin-top: 12px;
 }
-
-    .btn.secondary:hover, a.btn.secondary:hover {
-        filter: none;
-        box-shadow: 0 0 0 3px rgba(125,211,252,.15);
-    }
+.btn.secondary:hover, a.btn.secondary:hover {
+    filter: none;
+    box-shadow: 0 0 0 3px rgba(125,211,252,.15);
+}
 
 /* 홈/대시보드에서 쓰는 유틸 (중복 방지로 여기도 넣음) */
 .grid-3 {
@@ -180,7 +171,6 @@ input, select, textarea {
     grid-template-columns: repeat(3,1fr);
     gap: 12px;
 }
-
 .tile {
     display: flex;
     flex-direction: column;
@@ -195,10 +185,7 @@ input, select, textarea {
     text-align: center;
     min-height: 86px;
 }
-
-    .tile .emoji {
-        font-size: 22px
-    }
+.tile .emoji { font-size: 22px }
 
 .section-title {
     font-size: 18px;
@@ -237,6 +224,7 @@ input, select, textarea {
     gap: 8px;
     flex-wrap: wrap
 }
+
 /* --- profile 전용 로그아웃 FAB 고정/자동 폭 강제 --- */
 #logoutFab {
     position: fixed;
