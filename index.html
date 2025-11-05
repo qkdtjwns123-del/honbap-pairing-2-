@@ -6,75 +6,16 @@
     <title>혼밥러 · 홈</title>
     <link rel="stylesheet" href="style.css?v=20" />
     <style>
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3,1fr);
-            gap: 12px
-        }
-
-        .tile {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 14px;
-            border-radius: 14px;
-            background: #0e1322;
-            border: 1px solid #22283a;
-            cursor: pointer;
-            text-align: center;
-            min-height: 86px
-        }
-
-            .tile .emoji {
-                font-size: 22px
-            }
-
-        .section-title {
-            font-size: 18px;
-            margin: 0 0 10px 0
-        }
-
-        .muted-sm {
-            color: #9aa0a6;
-            font-size: 12px
-        }
-
-        .post-card {
-            background: #0e1322;
-            border: 1px solid #22283a;
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 10px
-        }
-
-        .post-title {
-            font-weight: 800;
-            font-size: 15px;
-            margin: 0 0 4px 0
-        }
-
-        .post-meta {
-            color: #9aa0a6;
-            font-size: 12px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap
-        }
-
-        .row-wrap {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap
-        }
-
-        .anon-wrap {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 8px
-        }
+        .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px }
+        .tile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 14px; border-radius: 14px; background: #0e1322; border: 1px solid #22283a; cursor: pointer; text-align: center; min-height: 86px }
+        .tile .emoji { font-size: 22px }
+        .section-title { font-size: 18px; margin: 0 0 10px 0 }
+        .muted-sm { color: #9aa0a6; font-size: 12px }
+        .post-card { background: #0e1322; border: 1px solid #22283a; border-radius: 12px; padding: 12px; margin-top: 10px }
+        .post-title { font-weight: 800; font-size: 15px; margin: 0 0 4px 0 }
+        .post-meta { color: #9aa0a6; font-size: 12px; display: flex; gap: 8px; flex-wrap: wrap }
+        .row-wrap { display: flex; gap: 8px; flex-wrap: wrap }
+        .anon-wrap { display: flex; align-items: center; gap: 6px; margin-top: 8px }
     </style>
 </head>
 <body>
@@ -125,7 +66,7 @@
     </div>
 
     <script src="config.js?v=26"></script>
-    <script type="module" src="./firebase.js?v=26"></script>
+    <script type="module" src="./firebase.js?v=28"></script>
     <script type="module">
         const $ = (s) => document.querySelector(s);
         const feed = $("#feed"), quickTitle = $("#quickTitle"), quickBody = $("#quickBody"),
