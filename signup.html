@@ -51,7 +51,8 @@
         </div>
     </div>
 
-    <script type="module" src="./firebase.js?v=22"></script>
+    <script src="config.js?v=26"></script>
+    <script type="module" src="./firebase.js?v=28"></script>
 
     <script type="module">
         const $ = (s) => document.querySelector(s);
@@ -114,10 +115,5 @@
             }
         });
     </script>
-    <!-- 1) config.js를 먼저 로드해서 window.firebaseConfig를 준비 -->
-    <script src="config.js?v=26"></script>
-    <!-- 2) firebase.js는 ES 모듈로 로드 (import 문 때문에 반드시 type="module") -->
-    <script type="module" src="firebase.js?v=26"></script>
-
 </body>
 </html>
