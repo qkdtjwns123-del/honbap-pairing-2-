@@ -148,9 +148,11 @@ function _assertKwEmail(email) {
     if (!email || !KW_EMAIL_RE.test(email)) throw new Error("광운대 이메일(@kw.ac.kr)만 사용 가능합니다.");
 }
 function _actionCodeSettings() {
-    const base = (typeof window !== 'undefined' && window.location && window.location.origin)
-        ? window.location.origin : "http://localhost";
-    return { url: `${base}/signup.html`, handleCodeInApp: true };
+    // ✅ 현재 페이지 전체 URL 기준으로 signup.html 절대 URL 생성 (프로젝트 경로 포함)
+    const url = (typeof window !== 'undefined' && window.location)
+        ? new URL('signup.html', window.location.href).toString()
+        : "http://localhost/signup.html";
+    return { url, handleCodeInApp: true };
 }
 async function sendEmailLink(email) {
     const e = (email || "").trim(); _assertKwEmail(e);
